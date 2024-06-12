@@ -1,0 +1,19 @@
+﻿/**
+ * Detect specific SOQL error messages in response body
+ * @author Aussan Saad-Ali
+ **/
+
+// Check if the response contains specific SOQL error messages
+if (requestResponse.hasResponse()) {
+    var responseBody = requestResponse.response().bodyToString().trim().toLowerCase();
+
+    // Check for specific SOQL error messages
+    boolean isSOQLError = responseBody.contains("system.queryexception") || responseBody.contains("mismatched character '<eof>' expecting '''");
+
+    // Return specific messages if SOQL error detected
+    if (isSOQLError) {
+        return "SOQL error found in response";
+    }
+}
+
+return ""; // Return empty if no relevant data is found
