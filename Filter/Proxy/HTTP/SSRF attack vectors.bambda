@@ -1,0 +1,35 @@
+/**
+ *
+ * Useful to identify possible attack surface for SSRF.
+ *
+ * @author intrudir
+ **/
+List<String> ssrfList = Arrays.asList(
+    "access","adm","admin","alter","callback","cfg","clone","continue",
+    "create","data","dbg","debug","delete","dest","dir","disable","doc",
+    "document","domain","edit","enable","exec","execute","feed","file",
+    "filename","folder","grant","host","html","img","load","make","modify",
+    "navigation","next","open","out","page","path","pg","php_path","port",
+    "redirect","reference","rename","reset","return","root","shell","show",
+    "site","style","test","to","toggle","uri","url","val","validate","view",
+    "window");
+
+HttpRequest request = requestResponse.request();
+if (request.hasParameters()){
+    for (ParsedHttpParameter parameter : request.parameters()){
+        String parameterName = parameter.name();
+        String parameterValue = parameter.value();
+        if (ssrfList.contains(parameterName)) {
+            return true;
+        }
+        // Finds requests containing URLs.
+        if (parameterValue.contains("http://") ||
+            parameterValue.contains(utilities().urlUtils().encode("http://")) ||
+            parameterValue.contains("https://") ||
+            parameterValue.contains(utilities().urlUtils().encode("https://"))){
+            return true;
+        }
+    }
+}
+
+return false;
