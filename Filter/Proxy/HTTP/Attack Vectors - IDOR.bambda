@@ -1,0 +1,36 @@
+/**
+ *
+ * Useful to identify possible attack surface for IDOR.
+ *
+ * @author intrudir
+ **/
+List<String> idorList = Arrays.asList("account","doc","edit","email","group","id","key","no","number","order","profile","report","user");
+StringBuilder builder = new StringBuilder();
+
+HttpRequest request = requestResponse.request();
+if (request.hasParameters()){
+    boolean foundIdorParam = false;
+
+    for (ParsedHttpParameter parameter : request.parameters()){
+        String parameterName = parameter.name();
+        String parameterValue = parameter.value();
+
+        // check if one of the above params is in the request
+        if (idorList.contains(parameterName)) {
+            foundIdorParam = true;
+        }
+        // Look for UUIDs. Will add more UUID versions later
+        // Will add them to the notes tab of the request in Burp
+        Matcher m = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",Pattern.CASE_INSENSITIVE).matcher(parameterValue.toString());
+        while (m.find()) {
+            builder.append(m.group() + " ");
+        }
+    }
+    if (builder.length() > 0) {
+        requestResponse.annotations().setNotes(builder.toString());
+    }
+
+    return foundIdorParam || builder.length() > 0;
+}
+
+return false;
