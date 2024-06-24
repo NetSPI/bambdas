@@ -1,18 +1,32 @@
 ﻿/**
- * Detect specific SOQL error messages in response body
+ * Detect specific SOQL and SOSL error messages in response body and add annotations
  * @author Aussan Saad-Ali
  **/
 
-// Check if the response contains specific SOQL error messages
+// Check if the response is null
+if (requestResponse.response() == null) {
+    return "";
+}
+
+// Check if the response contains specific SOQL or SOSL error messages
 if (requestResponse.hasResponse()) {
     var responseBody = requestResponse.response().bodyToString().trim().toLowerCase();
 
     // Check for specific SOQL error messages
     boolean isSOQLError = responseBody.contains("system.queryexception") || responseBody.contains("mismatched character '<eof>' expecting '''");
 
-    // Return specific messages if SOQL error detected
+    // Check for specific SOSL error messages
+    boolean isSOSLError = responseBody.contains("system.searchexception: search term must be longer than one character");
+
+    // Add notes and return specific messages if SOQL or SOSL error detected
     if (isSOQLError) {
-        return "SOQL error found in response";
+        String note = "SOQL error found in response";
+        requestResponse.annotations().setNotes(note);
+        return note;
+    } else if (isSOSLError) {
+        String note = "SOSL error found in response";
+        requestResponse.annotations().setNotes(note);
+        return note;
     }
 }
 
