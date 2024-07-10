@@ -1,11 +1,12 @@
 ﻿/**
+/**
  * Extracts the specific part of the action descriptor from Salesforce Aura requests
+ * and formats it to display the keyword before :// and the last word after /
+ * e.g., "serviceComponent: ACTION$getItems"
  * @author Aussan Saad-Ali
  **/
 
-// Check if the request path contains 'aura'
-if (requestResponse.finalRequest().path().contains("aura")) {
-    // Extract the body of the request
+if (requestResponse.finalRequest().path().contains("aura")) {  
     var requestBody = requestResponse.finalRequest().bodyToString().trim();
 
     // Regex to find the URL-encoded 'message' parameter in the body
@@ -13,17 +14,18 @@ if (requestResponse.finalRequest().path().contains("aura")) {
     var messageMatcher = messageParamPattern.matcher(requestBody);
 
     if (messageMatcher.find()) {
-        // Decode the message parameter
         var decodedMessage = java.net.URLDecoder.decode(messageMatcher.group(1), "UTF-8").trim();
-
-        // Regex to parse any 'descriptor' from the decoded message
-        var descriptorPattern = java.util.regex.Pattern.compile("\"descriptor\":\"([^\" ]+)");
+        var descriptorPattern = java.util.regex.Pattern.compile("\"descriptor\":\"([^\"]+)");
         var descriptorMatcher = descriptorPattern.matcher(decodedMessage);
         
         if (descriptorMatcher.find()) {
-            return "/" + descriptorMatcher.group(1);
+            var fullDescriptor = descriptorMatcher.group(1);
+            // Extract the keyword before :// and the last word after /
+            var keywordBefore = fullDescriptor.substring(0, fullDescriptor.indexOf("://"));
+            var lastWordAfter = fullDescriptor.substring(fullDescriptor.lastIndexOf("/") + 1);
+            return keywordBefore + ": " + lastWordAfter;
         }
     }
 }
 
-return ""; // Return empty if no relevant action is found
+return ""; 
