@@ -1,5 +1,6 @@
 /**
  * Detect specific SOQL and SOSL error messages in response body and add annotations
+ * @author Aussan Saad-Ali
  **/
 
 // Check if the response is null
@@ -15,7 +16,7 @@ if (requestResponse.hasResponse()) {
     boolean isSOQLError = responseBody.contains("system.queryexception") || responseBody.contains("mismatched character '<eof>' expecting '''");
 
     // Check for specific SOSL error messages
-    boolean isSOSLError = responseBody.contains("system.searchexception: search term must be longer than one character");
+    boolean isSOSLError = responseBody.contains("system.searchexception") || responseBody.contains("search term must be longer than one character");
 
     // Add notes and return specific messages if SOQL or SOSL error detected
     if (isSOQLError) {
