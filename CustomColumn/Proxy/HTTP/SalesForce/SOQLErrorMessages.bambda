@@ -1,6 +1,5 @@
-﻿/**
+/**
  * Detect specific SOQL and SOSL error messages in response body and add annotations
- * @author Aussan Saad-Ali
  **/
 
 // Check if the response is null
@@ -21,10 +20,12 @@ if (requestResponse.hasResponse()) {
     // Add notes and return specific messages if SOQL or SOSL error detected
     if (isSOQLError) {
         String note = "SOQL error found in response";
+        requestResponse.annotations().setHighlightColor(HighlightColor.RED);
         requestResponse.annotations().setNotes(note);
         return note;
     } else if (isSOSLError) {
         String note = "SOSL error found in response";
+        requestResponse.annotations().setHighlightColor(HighlightColor.ORANGE);
         requestResponse.annotations().setNotes(note);
         return note;
     }
