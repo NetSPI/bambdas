@@ -1,0 +1,36 @@
+StringBuilder cspNotes = new StringBuilder();
+
+// Only show reqs in scope
+if (!requestResponse.request().isInScope()) {
+    return false;
+}
+
+if(requestResponse.response() == null) {
+    return false;
+}
+
+// Check if no CSP
+if(!requestResponse.response().hasHeader("Content-Security-Policy")) {
+    cspNotes.append("No CSP in response").append("\n");
+    requestResponse.annotations().setNotes(cspNotes.toString());
+    return true;
+}
+
+// Check if bad directives in CSP
+String csp = requestResponse.response().headerValue("Content-Security-Policy");
+ArrayList<String> vulnerableDirectives = new ArrayList<>();
+String[] directivesToCheck = new String[]{"unsafe-inline", "unsafe-eval"};
+
+for(int i=0;i<directivesToCheck.length;i++) {
+    if(csp.contains(directivesToCheck[i])) {
+        vulnerableDirectives.add(directivesToCheck[i]);
+    }
+}
+
+String.join(", ", vulnerableDirectives);
+cspNotes.append(vulnerableDirectives).append("\n");
+
+if (cspNotes.length() > 0) {
+    requestResponse.annotations().setNotes(cspNotes.toString());
+}
+return cspNotes.length() > 0;

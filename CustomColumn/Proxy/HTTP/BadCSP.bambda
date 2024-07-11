@@ -1,0 +1,19 @@
+if (requestResponse.response() != null) {
+    if(!requestResponse.response().hasHeader("Content-Security-Policy")) {
+        return "No CSP";
+    }
+
+    String csp = requestResponse.response().headerValue("Content-Security-Policy");
+    ArrayList<String> vulnerableDirectives = new ArrayList<>();
+    String[] directivesToCheck = new String[]{"unsafe-inline", "unsafe-eval"};
+
+    for(int i=0;i<directivesToCheck.length;i++) {
+        if(csp.contains(directivesToCheck[i])) {
+            vulnerableDirectives.add(directivesToCheck[i]);
+        }
+    }
+
+    return String.join(", ", vulnerableDirectives);
+} else {
+    return false;
+}

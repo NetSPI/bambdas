@@ -1,0 +1,22 @@
+StringBuilder hstsNotes = new StringBuilder();
+
+// Only show reqs in scope
+if (!requestResponse.request().isInScope()) {
+    return false;
+}
+
+if(requestResponse.response() == null) {
+    return false;
+}
+
+// Check if no HSTS
+if(!requestResponse.response().hasHeader("Strict-Transport-Security")) {
+    hstsNotes.append("No HSTS in response").append("\n");
+    requestResponse.annotations().setNotes(hstsNotes.toString());
+    return true;
+}
+
+if (hstsNotes.length() > 0) {
+    requestResponse.annotations().setNotes(hstsNotes.toString());
+}
+return hstsNotes.length() > 0;
