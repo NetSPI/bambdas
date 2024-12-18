@@ -22,7 +22,7 @@ Requirements: Java 17+
 
 In the top level directory of the folder containing your Bambdas, run the following command:
 ```
-java -jar BambdaChecker-1.2.jar
+java -jar BambdaChecker-1.3.jar
 ```
 
 Verify the output. To do this quickly, check the exit code is 0 for a valid run. 
@@ -32,7 +32,7 @@ This will also update or generate markdown files as appropriate. This is only fo
 If you only want to perform the validation check without affecting the markdown, then run:
 
 ```
-java -jar BambdaChecker-1.2.jar validateonly
+java -jar BambdaChecker-1.3.jar validateonly
 ```
 
 ### What it checks for
@@ -43,7 +43,7 @@ java -jar BambdaChecker-1.2.jar validateonly
 
 1. Please make sure the Bambda is syntactically valid.
 2. Please make sure the Bambda is formatted correctly.
-   - Ensure that there is a JavaDoc style comment describing the Bambda containing an appropriate @author tag. For an example see [this bambda](https://github.com/PortSwigger/bambdas/blob/main/Proxy/HTTP/FilterOnCookieValue.bambda).
+   - Ensure that there is a JavaDoc style comment describing the Bambda containing an appropriate @author tag. For an example see [this bambda](https://github.com/PortSwigger/bambdas/blob/main/Filter/Proxy/HTTP/FilterOnCookieValue.bambda).
    - You may provide a link to your GitHub profile in the format `@author <author_name> (https://github.com/<author_profile>)`. Links must not be obscured.
    - Your description should be relatively short and precede the author tag. Longer details can be added after the author tag. These will remain in the Bambda, but will not be included in the generated markdown.
    - Indentation is four spaces, not tabs.
