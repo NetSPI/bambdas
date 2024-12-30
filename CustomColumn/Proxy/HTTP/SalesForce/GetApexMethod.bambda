@@ -1,0 +1,56 @@
+/**
+ * Extracts the "method" value from either the query string (GET requests) or JSON in the request body (POST requests).
+ * This avoids dependencies on external libraries.
+ # Author: Jonathan Conesa
+ **/
+
+if (requestResponse.finalRequest().path().contains("/api/apex/execute")) {
+    try {
+        // Check the HTTP method (GET or POST)
+        String httpMethod = requestResponse.finalRequest().method();
+
+        if (httpMethod.equalsIgnoreCase("GET")) {
+            // Extract the full URL
+            String url = requestResponse.finalRequest().url();
+
+            // Locate the start of the query string
+            int queryStartIndex = url.indexOf("?");
+            if (queryStartIndex != -1) {
+                String queryString = url.substring(queryStartIndex + 1); // Extract query string
+                String[] params = queryString.split("&"); // Split into individual parameters
+
+                for (String param : params) {
+                    if (param.startsWith("method=")) {
+                        // Extract and return the value of the "method" parameter
+                        return param.substring(7); // Skip "method="
+                    }
+                }
+                return "Error: 'method' key not found in query string";
+            } else {
+                return "Error: No query string found in URL";
+            }
+        } else if (httpMethod.equalsIgnoreCase("POST")) {
+            // Extract the request body as a string
+            String requestBody = requestResponse.finalRequest().bodyToString().trim();
+
+            // Ensure the body contains the "method" key
+            if (requestBody.contains("\"method\":\"")) {
+                int methodStartIndex = requestBody.indexOf("\"method\":\"") + 10; // Skip past "method":" length
+                int methodEndIndex = requestBody.indexOf("\"", methodStartIndex);
+
+                // Extract and return the "method" value
+                return requestBody.substring(methodStartIndex, methodEndIndex);
+            } else {
+                return "Error: 'method' key not found in body";
+            }
+        } else {
+            return "Error: Unsupported HTTP method " + httpMethod;
+        }
+    } catch (Exception e) {
+        // Return error details in case of an exception
+        return "Error: Exception while processing - " + e.getMessage();
+    }
+}
+
+// Return empty string if the request doesn't match the target criteria
+return "";
